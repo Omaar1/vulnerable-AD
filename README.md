@@ -44,10 +44,8 @@ Import-Module ADDSDeployment
 Install-ADDSForest `
     -CreateDnsDelegation:$false `
     -DatabasePath "C:\Windows\NTDS" `
-    -DomainMode "7" `
     -DomainName "red.invoke" `
     -DomainNetbiosName "red" `
-    -ForestMode "7" `
     -InstallDns:$true `
     -LogPath "C:\Windows\NTDS" `
     -NoRebootOnCompletion:$false `
@@ -55,6 +53,7 @@ Install-ADDSForest `
     -Force:$true
 
 # After reboot, run the vulnerable AD script
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 IEX((new-object net.webclient).downloadstring("https://raw.githubusercontent.com/Omaar1/vulnerable-AD/master/vulnad.ps1"))
 Invoke-VulnAD -UsersLimit 100 -DomainName "red.invoke"
 ```
